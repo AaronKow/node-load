@@ -26,12 +26,21 @@ const winston = require('winston'),
 const port = process.env.PORT || 5000;
 const host = process.env.HOST || 'localhost';
 app.use(express.static('public'));
-app.use(require('morgan')('combined', {
-    stream: {
-        write: message => {
-            logger.log('info', message);
-        }
-    }
+// app.use(require('morgan')('combined', {
+//     stream: {
+//         write: message => {
+//             logger.log('info', message);
+//         }
+//     }
+// }));
+app.use(require('winston-request-logger').create(logger, {
+    'response-time': ':responseTime ms', // outputs '5 ms'
+    'url': ':url[pathname]',
+    'ip': ':ip',
+    'status-code': ':statusCode',
+    'date': ':date',
+    'method': ':method',
+    'user-agent': ':userAgent'
 }));
 app.get('/', (req, res) => {
     res.writeHead(200, {
